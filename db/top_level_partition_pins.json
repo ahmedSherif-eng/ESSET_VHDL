@@ -1,0 +1,53 @@
+{
+	"partitions" : [
+		{
+			"name" : "Top",
+			"pins" : [
+				{
+					"name" : "out_toplvl_8bit_channel[0]",
+					"strict" : false
+				},
+				{
+					"name" : "out_toplvl_8bit_channel[1]",
+					"strict" : false
+				},
+				{
+					"name" : "out_toplvl_8bit_channel[2]",
+					"strict" : false
+				},
+				{
+					"name" : "out_toplvl_8bit_channel[3]",
+					"strict" : false
+				},
+				{
+					"name" : "out_toplvl_8bit_channel[4]",
+					"strict" : false
+				},
+				{
+					"name" : "out_toplvl_8bit_channel[5]",
+					"strict" : false
+				},
+				{
+					"name" : "out_toplvl_8bit_channel[6]",
+					"strict" : false
+				},
+				{
+					"name" : "out_toplvl_8bit_channel[7]",
+					"strict" : false
+				},
+				{
+					"name" : "toplvl_status",
+					"strict" : false
+				},
+				{
+					"name" : "clk",
+					"strict" : false
+				},
+				{
+					"name" : "in_toplvl_1bit_channel",
+					"strict" : false
+				}
+			]
+		}
+	]
+}

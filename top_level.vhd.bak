@@ -1,0 +1,40 @@
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity Top_Level is
+  port (
+    -- Ports for Data_Sniffing
+    in_channel1: in std_logic;
+    out_data: out std_logic_vector(7 downto 0);
+    clk: in std_logic;
+    data_sniffing_status: out std_logic;
+    
+    -- Ports for Communication_Protocol
+    in_data: in std_logic_vector(7 downto 0);
+    out_channel: out std_logic_vector(7 downto 0)
+  );
+end Top_Level;
+
+architecture behav of Top_Level is
+  signal data_sniffing_out_buffer: std_logic_vector(7 downto 0);
+  signal data_sniffing_status_internal: std_logic;
+begin
+  -- Instantiate Data_Sniffing
+  Data_Sniffing_inst : entity work.Data_Sniffing
+    port map (
+      in_channel1 => in_channel1,
+      out_channel => data_sniffing_out_buffer,
+      clk => clk,
+      status => data_sniffing_status_internal
+    );
+  
+  -- Instantiate Communication_Protocol
+  Communication_Module_inst : entity work.Communication_Module
+    port map (
+      in_channel => data_sniffing_out_buffer,
+      out_channel => out_data
+    );
+  
+  -- Connect the status signal from Data_Sniffing to an external signal
+  data_sniffing_status <= data_sniffing_status_internal;
+end behav;

@@ -1,0 +1,15 @@
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity Communication_Module is
+  port (
+    in_channel: in std_logic_vector(7 downto 0);
+    out_channel: out std_logic_vector(7 downto 0)
+  );
+end Communication_Module;
+
+architecture behav of Communication_Module is
+begin
+  -- Your communication protocol logic here
+  out_channel <= in_channel;  -- Example: Pass-through
+end behav;

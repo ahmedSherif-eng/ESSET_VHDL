@@ -1,0 +1,32 @@
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity Data_Sniffing is
+  port (
+    in_channel1: in std_logic;
+    out_channel: out std_logic_vector(7 downto 0);
+    clk: in std_logic;
+    status: out std_logic
+  );
+end Data_Sniffing;
+
+architecture behav of Data_Sniffing is
+  signal out_buffer: std_logic_vector(7 downto 0) := "00000000";
+begin
+  process(clk)
+    variable counter: natural := 0;
+  begin
+    if rising_edge(clk) then
+      out_buffer <= out_buffer(6 downto 0) & in_channel1;
+      counter := counter + 1;
+      if counter = 9 then
+        status <= '1';
+        out_channel <= out_buffer;
+        out_buffer <= "00000000";
+        counter := 0;
+      else
+        status <= '0';
+      end if;
+    end if;
+  end process;
+end behav;

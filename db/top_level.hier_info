@@ -1,0 +1,103 @@
+|top_level
+in_toplvl_1bit_channel => data_sniffing:Data_Sniffing_instance.in_sniff_1bit_channel
+out_toplvl_8bit_channel[0] <= communication_module:Communication_Module_instance.out_comm_channel[0]
+out_toplvl_8bit_channel[1] <= communication_module:Communication_Module_instance.out_comm_channel[1]
+out_toplvl_8bit_channel[2] <= communication_module:Communication_Module_instance.out_comm_channel[2]
+out_toplvl_8bit_channel[3] <= communication_module:Communication_Module_instance.out_comm_channel[3]
+out_toplvl_8bit_channel[4] <= communication_module:Communication_Module_instance.out_comm_channel[4]
+out_toplvl_8bit_channel[5] <= communication_module:Communication_Module_instance.out_comm_channel[5]
+out_toplvl_8bit_channel[6] <= communication_module:Communication_Module_instance.out_comm_channel[6]
+out_toplvl_8bit_channel[7] <= communication_module:Communication_Module_instance.out_comm_channel[7]
+clk => data_sniffing:Data_Sniffing_instance.clk
+toplvl_status <= toplvl_status.DB_MAX_OUTPUT_PORT_TYPE
+global.bp.work.Common_Ports.data_sniffing_out_buffer_7_ <> global.bp.work.Common_Ports.data_sniffing_out_buffer_7_
+global.bp.work.Common_Ports.data_sniffing_out_buffer_6_ <> global.bp.work.Common_Ports.data_sniffing_out_buffer_6_
+global.bp.work.Common_Ports.data_sniffing_out_buffer_5_ <> global.bp.work.Common_Ports.data_sniffing_out_buffer_5_
+global.bp.work.Common_Ports.data_sniffing_out_buffer_4_ <> global.bp.work.Common_Ports.data_sniffing_out_buffer_4_
+global.bp.work.Common_Ports.data_sniffing_out_buffer_3_ <> global.bp.work.Common_Ports.data_sniffing_out_buffer_3_
+global.bp.work.Common_Ports.data_sniffing_out_buffer_2_ <> global.bp.work.Common_Ports.data_sniffing_out_buffer_2_
+global.bp.work.Common_Ports.data_sniffing_out_buffer_1_ <> global.bp.work.Common_Ports.data_sniffing_out_buffer_1_
+global.bp.work.Common_Ports.data_sniffing_out_buffer_0_ <> global.bp.work.Common_Ports.data_sniffing_out_buffer_0_
+global.bp.work.Common_Ports.data_sniffing_status_internal <> toplvl_status
+
+
+|top_level|Data_Sniffing:Data_Sniffing_instance
+in_sniff_1bit_channel => out_buffer.DATAA
+out_sniff_8bit_channel[0] <= out_sniff_8bit_channel[0]~reg0.DB_MAX_OUTPUT_PORT_TYPE
+out_sniff_8bit_channel[1] <= out_sniff_8bit_channel[1]~reg0.DB_MAX_OUTPUT_PORT_TYPE
+out_sniff_8bit_channel[2] <= out_sniff_8bit_channel[2]~reg0.DB_MAX_OUTPUT_PORT_TYPE
+out_sniff_8bit_channel[3] <= out_sniff_8bit_channel[3]~reg0.DB_MAX_OUTPUT_PORT_TYPE
+out_sniff_8bit_channel[4] <= out_sniff_8bit_channel[4]~reg0.DB_MAX_OUTPUT_PORT_TYPE
+out_sniff_8bit_channel[5] <= out_sniff_8bit_channel[5]~reg0.DB_MAX_OUTPUT_PORT_TYPE
+out_sniff_8bit_channel[6] <= out_sniff_8bit_channel[6]~reg0.DB_MAX_OUTPUT_PORT_TYPE
+out_sniff_8bit_channel[7] <= out_sniff_8bit_channel[7]~reg0.DB_MAX_OUTPUT_PORT_TYPE
+clk => out_sniff_8bit_channel[0]~reg0.CLK
+clk => out_sniff_8bit_channel[1]~reg0.CLK
+clk => out_sniff_8bit_channel[2]~reg0.CLK
+clk => out_sniff_8bit_channel[3]~reg0.CLK
+clk => out_sniff_8bit_channel[4]~reg0.CLK
+clk => out_sniff_8bit_channel[5]~reg0.CLK
+clk => out_sniff_8bit_channel[6]~reg0.CLK
+clk => out_sniff_8bit_channel[7]~reg0.CLK
+clk => sniff_status~reg0.CLK
+clk => out_buffer[0].CLK
+clk => out_buffer[1].CLK
+clk => out_buffer[2].CLK
+clk => out_buffer[3].CLK
+clk => out_buffer[4].CLK
+clk => out_buffer[5].CLK
+clk => out_buffer[6].CLK
+clk => out_buffer[7].CLK
+clk => counter[0].CLK
+clk => counter[1].CLK
+clk => counter[2].CLK
+clk => counter[3].CLK
+clk => counter[4].CLK
+clk => counter[5].CLK
+clk => counter[6].CLK
+clk => counter[7].CLK
+clk => counter[8].CLK
+clk => counter[9].CLK
+clk => counter[10].CLK
+clk => counter[11].CLK
+clk => counter[12].CLK
+clk => counter[13].CLK
+clk => counter[14].CLK
+clk => counter[15].CLK
+clk => counter[16].CLK
+clk => counter[17].CLK
+clk => counter[18].CLK
+clk => counter[19].CLK
+clk => counter[20].CLK
+clk => counter[21].CLK
+clk => counter[22].CLK
+clk => counter[23].CLK
+clk => counter[24].CLK
+clk => counter[25].CLK
+clk => counter[26].CLK
+clk => counter[27].CLK
+clk => counter[28].CLK
+clk => counter[29].CLK
+clk => counter[30].CLK
+sniff_status <= sniff_status~reg0.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|top_level|Communication_Module:Communication_Module_instance
+in_comm_channel[0] => out_comm_channel[0].DATAIN
+in_comm_channel[1] => out_comm_channel[1].DATAIN
+in_comm_channel[2] => out_comm_channel[2].DATAIN
+in_comm_channel[3] => out_comm_channel[3].DATAIN
+in_comm_channel[4] => out_comm_channel[4].DATAIN
+in_comm_channel[5] => out_comm_channel[5].DATAIN
+in_comm_channel[6] => out_comm_channel[6].DATAIN
+in_comm_channel[7] => out_comm_channel[7].DATAIN
+out_comm_channel[0] <= in_comm_channel[0].DB_MAX_OUTPUT_PORT_TYPE
+out_comm_channel[1] <= in_comm_channel[1].DB_MAX_OUTPUT_PORT_TYPE
+out_comm_channel[2] <= in_comm_channel[2].DB_MAX_OUTPUT_PORT_TYPE
+out_comm_channel[3] <= in_comm_channel[3].DB_MAX_OUTPUT_PORT_TYPE
+out_comm_channel[4] <= in_comm_channel[4].DB_MAX_OUTPUT_PORT_TYPE
+out_comm_channel[5] <= in_comm_channel[5].DB_MAX_OUTPUT_PORT_TYPE
+out_comm_channel[6] <= in_comm_channel[6].DB_MAX_OUTPUT_PORT_TYPE
+out_comm_channel[7] <= in_comm_channel[7].DB_MAX_OUTPUT_PORT_TYPE
+
+
