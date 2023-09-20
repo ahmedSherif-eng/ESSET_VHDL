@@ -3,10 +3,13 @@ use ieee.std_logic_1164.all;
 use work.Common_Ports.all;
 
 entity Top_Level is
+	generic (
+    N: positive := 8  -- Number of output channels
+  );
   port (
     -- Connect to the common ports
     in_toplvl_1bit_channel: in std_logic;
-    out_toplvl_8bit_channel: out std_logic_vector(7 downto 0);
+    out_toplvl_Nbit_channel: out std_logic_vector(N-1 downto 0);
     clk: in std_logic;
     toplvl_status: out std_logic
   );
@@ -18,7 +21,7 @@ begin
   Data_Sniffing_instance : entity work.Data_Sniffing
     port map (
       in_sniff_1bit_channel => in_toplvl_1bit_channel,
-      out_sniff_8bit_channel => data_sniffing_out_buffer,
+      out_sniff_Nbit_channel => data_sniffing_out_buffer,
       clk => clk,
       sniff_status => toplvl_status
     );
@@ -28,7 +31,7 @@ begin
     port map (
       -- Connect to the common ports
       in_comm_channel => data_sniffing_out_buffer,
-      out_comm_channel => out_toplvl_8bit_channel
+      out_comm_channel => out_toplvl_Nbit_channel
     );
   
   -- Connect the status signal from Data_Sniffing to an external signal
