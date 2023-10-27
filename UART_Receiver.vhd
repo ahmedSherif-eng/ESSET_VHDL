@@ -24,6 +24,8 @@ architecture Behav of UART_Receiver is
 	signal r_RX_Byte : std_logic_vector (7 downto 0):=(others=>'0');
 	signal r_RX_DV : std_logic :='0';
 	
+	signal w_SM_Main : std_logic_vector(2 downto 0); -- for simulation only
+	
 begin 
 	p_UART_RX : process (i_Clk)
 	begin
@@ -109,6 +111,13 @@ begin
   o_RX_DV   <= r_RX_DV;
   o_RX_Byte <= r_RX_Byte;
   
+    -- Create a signal for simulation purposes (allows waveform display)
+  w_SM_Main <= "000" when r_SM_Main = s_Idle else
+  	           "001" when r_SM_Main = s_RX_Start_Bit else
+               "010" when r_SM_Main = s_RX_Data_Bits else
+               "011" when r_SM_Main = s_RX_Stop_Bit else
+               "100" when r_SM_Main = s_Cleanup else
+               "101"; -- should never get here
   end Behav;
 				
 				
