@@ -14,5 +14,5 @@ end Communication_Module;
 
 architecture behav of Communication_Module is
 begin
-  out_comm_channel <= not in_comm_channel;
+  out_comm_channel <=  in_comm_channel;
 end behav;

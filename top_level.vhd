@@ -18,13 +18,22 @@ end Top_Level;
 architecture behav of Top_Level is
 begin
   -- Instantiate Data_Sniffing
-  Data_Sniffing_instance : entity work.Data_Sniffing
-    port map (
-      in_sniff_1bit_channel => in_toplvl_1bit_channel,
-      out_sniff_Nbit_channel => data_sniffing_out_buffer,
-      clk => clk,
-      sniff_status => toplvl_status
-    );
+ -- Data_Sniffing_instance : entity work.Data_Sniffing
+   -- port map (
+     -- in_sniff_1bit_channel => in_toplvl_1bit_channel,
+     -- out_sniff_Nbit_channel => data_sniffing_out_buffer,
+     -- clk => clk,
+     -- sniff_status => toplvl_status
+    --);
+	 
+	 -- UART instance
+	 UART_Receiver_Instance: entity work.UART_Receiver
+	 port map(
+	 i_Clk => clk,
+	 i_RX_Serial => in_toplvl_1bit_channel,
+	 o_RX_DV => toplvl_status,
+	 o_RX_Byte => data_sniffing_out_buffer
+	 );
   
   -- Instantiate Communication_Protocol
   Communication_Module_instance : entity work.Communication_Module
@@ -35,5 +44,5 @@ begin
     );
   
   -- Connect the status signal from Data_Sniffing to an external signal
-  toplvl_status <= data_sniffing_status_internal;
+ -- toplvl_status <= data_sniffing_status_internal;
 end behav;
