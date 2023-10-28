@@ -27,12 +27,21 @@ begin
     --);
 	 
 	 -- UART instance
-	 UART_Receiver_Instance: entity work.UART_Receiver
+	-- UART_Receiver_Instance: entity work.UART_Receiver
+	-- port map(
+	-- i_Clk => clk,
+	-- i_RX_Serial => in_toplvl_1bit_channel,
+	 --o_RX_DV => toplvl_status,
+	 --o_RX_Byte => data_sniffing_out_buffer
+	 --);
+	 
+	 
+	 SPI_Slave_Instance: entity work.SPI_Slave
 	 port map(
-	 i_Clk => clk,
-	 i_RX_Serial => in_toplvl_1bit_channel,
-	 o_RX_DV => toplvl_status,
-	 o_RX_Byte => data_sniffing_out_buffer
+	 i_SCK => clk,
+	 i_MOSI => in_toplvl_1bit_channel,
+	 o_DV => toplvl_status,
+	 o_Rec_Data => data_sniffing_out_buffer
 	 );
   
   -- Instantiate Communication_Protocol
