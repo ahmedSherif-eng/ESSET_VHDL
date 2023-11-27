@@ -4,7 +4,7 @@ use ieee.numeric_std.all;
 
 entity UART_Receiver is
 	generic (
-		g_CLKS_PER_BIT: integer := 217   --assume clock is 25 MHz and baud rate 115200, 25M/115200 = 217
+		g_CLKS_PER_BIT: integer := 5208   --assume clock is 50 MHz and baud rate 9600, 50M/115200 = 217
 	);
 	port(
 		i_Clk: in std_logic;
@@ -24,7 +24,7 @@ architecture Behav of UART_Receiver is
 	signal r_RX_Byte : std_logic_vector (7 downto 0):=(others=>'0');
 	signal r_RX_DV : std_logic :='0';
 	
-	signal w_SM_Main : std_logic_vector(2 downto 0); -- for simulation only
+
 	
 begin 
 	p_UART_RX : process (i_Clk)
@@ -76,7 +76,7 @@ begin
 						r_Bit_Index <=r_Bit_index + 1;
 						r_SM_Main <= s_RX_Data_Bits;
 					else
-						r_Bit_Index <= 0;
+						r_Bit_Index <= 7;
 						r_SM_Main <= s_RX_Stop_Bit;
 					end if;
 				end if;
@@ -109,15 +109,8 @@ begin
   end process p_UART_RX;
 
   o_RX_DV   <= r_RX_DV;
-  o_RX_Byte <= r_RX_Byte;
-  
-    -- Create a signal for simulation purposes (allows waveform display)
-  w_SM_Main <= "000" when r_SM_Main = s_Idle else
-  	           "001" when r_SM_Main = s_RX_Start_Bit else
-               "010" when r_SM_Main = s_RX_Data_Bits else
-               "011" when r_SM_Main = s_RX_Stop_Bit else
-               "100" when r_SM_Main = s_Cleanup else
-               "101"; -- should never get here
+	o_RX_Byte <= r_RX_Byte when(r_RX_DV = '1');
+
   end Behav;
 				
 				
