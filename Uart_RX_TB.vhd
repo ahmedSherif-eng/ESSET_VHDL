@@ -67,14 +67,12 @@ begin
     wait until rising_edge(r_Clock);
 
     -- Check that the correct command was received
-    if w_RX_Byte = X"0" then
+    if w_RX_Byte = X"37" then
       report "Test Passed - Correct Byte Received" severity note;
     else 
       report "Test Failed - Incorrect Byte Received" severity note;
     end if;
-
-    assert false report "Tests Complete" severity failure;
-    
+      
   end process;
   
 end Behave;
