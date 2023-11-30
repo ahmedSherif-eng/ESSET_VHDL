@@ -8,15 +8,15 @@ entity Top_Level is
   );
   port (
     -- Connect to the common ports
-    in_toplvl_1bit_channel: in std_logic;
-    out_toplvl_Nbit_channel: out std_logic_vector(N-1 downto 0);
+    i_1bit: in std_logic;
+    o_Nbit: out std_logic_vector(N-1 downto 0);
     clk: in std_logic;
-    toplvl_status: out std_logic;
-    in_TX_DV: in std_logic;
-    in_TX_Byte   : in  std_logic_vector(7 downto 0);
-    out_TX_Active : out std_logic;
-    out_TX_Serial : out std_logic;
-    out_TX_Done   : out std_logic
+    o_status: out std_logic;
+    i_TX_DV: in std_logic;
+    i_TX_Byte   : in  std_logic_vector(7 downto 0);
+    o_TX_Active : out std_logic;
+    o_TX_Serial : out std_logic;
+    o_TX_Done   : out std_logic
   );
 end Top_Level;
 
@@ -25,29 +25,29 @@ begin
   -- Instantiate Data_Sniffing
  -- Data_Sniffing_instance : entity work.Data_Sniffing
    -- port map (
-     -- in_sniff_1bit_channel => in_toplvl_1bit_channel,
+     -- in_sniff_1bit_channel => i_1bit,
      -- out_sniff_Nbit_channel => data_sniffing_out_buffer,
      -- clk => clk,
-     -- sniff_status => toplvl_status
+     -- sniff_status => o_status
     --);
 	 
 	 -- UART instance
 	 UART_Receiver_Instance: entity work.UART_Receiver
 	 port map(
 	 i_Clk => clk,
-	 i_RX_Serial => in_toplvl_1bit_channel,
-	 o_RX_DV => toplvl_status,
+	 i_RX_Serial => i_1bit,
+	 o_RX_DV => o_status,
 	 o_RX_Byte => data_sniffing_out_buffer
 	 );
     --Instantiate UART TX
     UART_Transmitter_Instance: entity work.UART_TX
     port map(
       i_Clk => clk,
-      i_TX_DV => in_TX_DV,
-      i_TX_Byte => in_TX_Byte,
-      o_TX_Active => out_TX_Active,
-      o_TX_Serial => out_TX_Serial,
-      o_TX_Done => out_TX_Done
+      i_TX_DV => i_TX_DV,
+      i_TX_Byte => i_TX_Byte,
+      o_TX_Active => o_TX_Active,
+      o_TX_Serial => o_TX_Serial,
+      o_TX_Done => o_TX_Done
     );
 
   -- Instantiate Communication_Protocol
@@ -55,10 +55,10 @@ begin
     port map (
       -- Connect to the common ports
       in_comm_channel => data_sniffing_out_buffer,
-      out_comm_channel => out_toplvl_Nbit_channel
+      out_comm_channel => o_Nbit
     );
 
   
   -- Connect the status signal from Data_Sniffing to an external signal
- -- toplvl_status <= data_sniffing_status_internal;
+ -- o_status <= data_sniffing_status_internal;
 end behav;
