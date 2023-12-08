@@ -9,7 +9,7 @@ entity UART_TX is
   port (
     i_Clk       : in  std_logic;
     i_TX_DV     : in  std_logic;
-    i_TX_Byte   : in  std_logic_vector(7 downto 0);
+   -- i_TX_Byte   : in  std_logic_vector(7 downto 0);
     o_TX_Active : out std_logic;
     o_TX_Serial : out std_logic;
     o_TX_Done   : out std_logic
@@ -27,7 +27,7 @@ architecture RTL of UART_TX is
   signal r_Bit_Index : integer range 0 to 7 := 0;  -- 8 Bits Total
   signal r_TX_Data   : std_logic_vector(7 downto 0) := (others => '0');
   signal r_TX_Done   : std_logic := '0';
-   
+  signal r_TX_DV     : std_logic := '1';
 begin
  
    
@@ -44,8 +44,8 @@ begin
           r_Clk_Count <= 0;
           r_Bit_Index <= 0;
  
-          if i_TX_DV = '1' then
-            r_TX_Data <= i_TX_Byte;
+          if r_TX_DV = '1' then
+          --  r_TX_Data <= i_TX_Byte;
             r_SM_Main <= s_TX_Start_Bit;
           else
             r_SM_Main <= s_Idle;
@@ -111,7 +111,7 @@ begin
       end case;
     end if;
   end process p_UART_TX;
- 
+  r_TX_Data<=X"35";
   o_TX_Done <= r_TX_Done;
    
 end RTL;
