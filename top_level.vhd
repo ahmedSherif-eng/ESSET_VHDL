@@ -62,3 +62,4 @@ begin
   -- Connect the status signal from Data_Sniffing to an external signal
  -- o_status <= data_sniffing_status_internal;
 end behav;
+
