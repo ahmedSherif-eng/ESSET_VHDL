@@ -8,24 +8,59 @@ entity SPI_Master is
 	port(
 		o_MOSI: out std_logic;
 		o_sck: out std_logic;
+		o_SS: out std_logic;
 		i_clk: in std_logic;
-		i_TX_Byte: in std_logic_vector (7 downto 0)
+		i_TX_Byte: in std_logic_vector (7 downto 0);
+		i_TX_DV  : in  std_logic
 	);
 end SPI_Master;
 
 Architecture behav of SPI_Master is
+type t_SM_Main is (s_Idle, s_TX_Data, s_Cleanup);
+signal r_SM_Main : t_SM_Main := s_Idle;
 signal r_clks_count: integer:=0;
 signal r_sck: std_logic:='1';
+signal r_SS: std_logic:='1';
+signal r_Bit_Index : integer range 0 to 7 := 0;  -- 8 Bits Total
+signal r_TX_Byte:std_logic_vector(7 downto 0):=(others=>'0');
+signal r_MOSI:std_logic:='1';
 begin
 p_CLK_GEN: process(i_clk)
 		begin 
 		if rising_edge(i_clk) then
-			 r_clks_count<=r_clks_count+1;
-			 if r_clks_count=g_CLKS_PER_BIT/2 then
-				r_sck <= not r_sck;
+		case r_SM_Main is 
+			when s_Idle=>
+				r_SS<='1';
 				r_clks_count<=0;
+				r_Bit_Index<=0;
+				if i_TX_DV ='1' then
+					r_SM_Main<= s_TX_Data;
+					r_TX_Byte<=i_TX_Byte;
+				else
+					r_SM_Main <= s_Idle;
+				end if;
+			 when s_TX_Data=>		
+				 r_clks_count<=r_clks_count+1;
+				 if r_clks_count=g_CLKS_PER_BIT/2 then
+					r_sck <= not r_sck;
+					r_clks_count<=0;
 			 end if;
+			 if rising_edge(r_sck) then
+				r_MOSI<=r_TX_Byte(r_Bit_Index);
+				if r_Bit_Index < 7 then
+              r_Bit_Index <= r_Bit_Index + 1;
+              r_SM_Main   <= s_TX_Data;
+            else
+              r_Bit_Index <= 0;
+              r_SM_Main   <= s_Idle;
+            end if;
+			 else
+			 r_SM_Main   <= s_TX_Data;
+			 end if;
+	end case;
 		end if;
-	end process p_CLK_GEN;
+end process p_CLK_GEN;
  o_sck<=r_sck;
+ o_SS<= r_SS;
+ o_MOSI<=r_MOSI;
 end behav;
