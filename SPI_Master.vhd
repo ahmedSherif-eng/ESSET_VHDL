@@ -1,9 +1,11 @@
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
 
 entity SPI_Master is 
 	generic(
-		g_CLKS_PER_BIT: integer := 6 -- 50MHZ system clock and assume 8MHZ SPI clock 
+		g_CLKS_PER_BIT: integer := 10 -- 50MHZ system clock and assume 5MHZ SPI clock 
 	);
 	port(
 		o_MOSI: out std_logic;
@@ -16,13 +18,13 @@ entity SPI_Master is
 end SPI_Master;
 
 Architecture behav of SPI_Master is
-type t_SM_Main is (s_Idle, s_TX_Data, s_Cleanup);
+type t_SM_Main is (s_Idle, s_TX_Data);
 signal r_SM_Main : t_SM_Main := s_Idle;
 signal r_clks_count: integer:=0;
 signal r_sck: std_logic:='1';
 signal r_SS: std_logic:='1';
 signal r_Bit_Index : integer range 0 to 7 := 0;  -- 8 Bits Total
-signal r_TX_Byte:std_logic_vector(7 downto 0):=(others=>'0');
+signal r_TX_Byte:std_logic_vector(7 downto 0):=X"AA";
 signal r_MOSI:std_logic:='1';
 begin
 p_CLK_GEN: process(i_clk)
@@ -35,17 +37,18 @@ p_CLK_GEN: process(i_clk)
 				r_Bit_Index<=0;
 				if i_TX_DV ='1' then
 					r_SM_Main<= s_TX_Data;
-					r_TX_Byte<=i_TX_Byte;
+				--	r_TX_Byte<=i_TX_Byte;
 				else
 					r_SM_Main <= s_Idle;
 				end if;
 			 when s_TX_Data=>		
 				 r_clks_count<=r_clks_count+1;
-				 if r_clks_count=g_CLKS_PER_BIT/2 then
+				 if r_clks_count=g_CLKS_PER_BIT/2 -1 then
 					r_sck <= not r_sck;
-					r_clks_count<=0;
 			 end if;
-			 if rising_edge(r_sck) then
+				if r_clks_count=g_CLKS_PER_BIT -1 then 
+					r_clks_count<=0;
+					r_sck <= not r_sck;
 				r_MOSI<=r_TX_Byte(r_Bit_Index);
 				if r_Bit_Index < 7 then
               r_Bit_Index <= r_Bit_Index + 1;
