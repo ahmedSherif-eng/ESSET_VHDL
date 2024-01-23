@@ -19,40 +19,45 @@ entity Top_Level is
     o_TX_Serial : out std_logic;
     o_TX_Done   : out std_logic;
 	 --SPI Slave ports
-	 i_SPI_clk: in std_logic
+	 i_SPI_clk: in std_logic;
+	 --SPI Master ports
+	 o_SPI_MOSI:out std_logic;
+	 o_sck:out std_logic;
+	 o_SS:out std_logic
   );
 end Top_Level;
 
 architecture behav of Top_Level is
 begin
-   Instantiate Data_Sniffing
-  Data_Sniffing_instance : entity work.Data_Sniffing
-    port map (
-      in_sniff_1bit_channel => i_1bit,
-      out_sniff_Nbit_channel => data_sniffing_out_buffer,
-      clk => clk,
-      sniff_status => o_status
-    );
+
+   --Instantiate Data_Sniffing
+  --Data_Sniffing_instance : entity work.Data_Sniffing
+   -- port map (
+      --in_sniff_1bit_channel => i_1bit,
+      --out_sniff_Nbit_channel => data_sniffing_out_buffer,
+     -- clk => clk,
+    --  sniff_status => o_status
+    --);
 	 
 	 --Instantiate UART RX
-	 UART_Receiver_Instance: entity work.UART_Receiver
-	 port map(
-	 i_Clk => clk,
-	 i_RX_Serial => i_1bit,
-	 o_RX_DV => o_status,
-	 o_RX_Byte => data_sniffing_out_buffer
-	 );
+	 --UART_Receiver_Instance: entity work.UART_Receiver
+	 --port map(
+	 --i_Clk => clk,
+	 --i_RX_Serial => i_1bit,
+	 --o_RX_DV => o_status,
+	 --o_RX_Byte => data_sniffing_out_buffer
+	 --);
     --Instantiate UART TX
-    UART_Transmitter_Instance: entity work.UART_TX
-    port map(
-      i_Clk => clk,
-      i_TX_DV => i_TX_DV,
+    --UART_Transmitter_Instance: entity work.UART_TX
+    --port map(
+      --i_Clk => clk,
+     -- i_TX_DV => i_TX_DV,
       --i_TX_Byte => i_TX_Byte,
-      o_TX_Active => o_TX_Active,
-      o_TX_Serial => o_TX_Serial,
-      o_TX_Done => o_TX_Done
-    );
-	 
+    --  o_TX_Active => o_TX_Active,
+    --  o_TX_Serial => o_TX_Serial,
+    --  o_TX_Done => o_TX_Done
+  --  );
+
 	  --Instantiate SPI Slave
     SPI_Slave_Instance: entity work.SPI_Slave
     port map(
@@ -61,6 +66,16 @@ begin
 		o_Rec_Data => data_sniffing_out_buffer,
 		i_SCK => i_SPI_clk
     );
+	 --Instantiate SPI Master
+	 SPI_Master_Instance: entity work.SPI_Master
+	 port map(
+	 o_MOSI => o_SPI_MOSI ,
+	 o_sck => o_sck ,
+	 o_SS => o_SS,
+	 i_clk => clk,
+	 i_TX_Byte =>X"35",
+	 i_TX_DV =>'1'
+	 );
 
   -- Instantiate Communication_Protocol
   Communication_Module_instance : entity work.Communication_Module
