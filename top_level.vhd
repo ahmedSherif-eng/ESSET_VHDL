@@ -9,8 +9,9 @@ entity Top_Level is
   port (
     -- genereal ports
     i_1bit: in std_logic;
-    o_1bit: out std_logic; --output of communication module
+   -- o_1bit: out std_logic; --output of communication module
     clk: in std_logic;
+	 o_Nbit: out std_logic_vector (7 downto 0);
 	 i_sck_RPI: in std_logic;
     o_status: out std_logic
     --UART ports
@@ -45,7 +46,8 @@ begin
 	 port map(
 	 i_Clk => clk,
 	 i_RX_Serial => i_1bit,
-	 o_RX_DV => r_DV,
+	 --o_RX_DV => r_DV,
+	 o_RX_DV => o_status,
 	 o_RX_Byte => data_sniffing_out_buffer
 	 );
     --Instantiate UART TX
@@ -79,23 +81,23 @@ begin
 --	 );
 
   -- Instantiate Communication_Protocol
---  Communication_Module_instance : entity work.Communication_Module
- --   port map (
-      -- Connect to the common ports
- --     in_comm_channel => data_sniffing_out_buffer,
- --     out_comm_channel => o_Nbit
- --   );
-
-  --Instantiate SPI Communication Module
-    Communication_SPI_instance : entity work.Communication_SPI
+  Communication_Module_instance : entity work.Communication_Module
     port map (
       -- Connect to the common ports
-      i_Data => data_sniffing_out_buffer,
-      o_MISO => o_1bit,
-		i_SCK		=> i_sck_RPI,
-		i_Sniff_DV => r_DV,
-		o_DV => o_status
+      in_comm_channel => data_sniffing_out_buffer,
+      out_comm_channel => o_Nbit
     );
+
+  --Instantiate SPI Communication Module
+ --   Communication_SPI_instance : entity work.Communication_SPI
+  --  port map (
+      -- Connect to the common ports
+   --   i_Data => data_sniffing_out_buffer,
+    --  o_MISO => o_1bit,
+	--	i_SCK		=> i_sck_RPI,
+	--	i_Sniff_DV => r_DV,
+	--	o_DV => o_status
+    --);
   -- Connect the status signal from Data_Sniffing to an external signal
  -- o_status <= data_sniffing_status_internal;
 end behav;
