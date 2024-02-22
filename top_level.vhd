@@ -12,6 +12,7 @@ entity Top_Level is
    -- o_1bit: out std_logic; --output of communication module
     clk: in std_logic;
 	 o_Nbit: out std_logic_vector (7 downto 0);
+	 i_ACK: in std_logic; -- ack of RPI that the DV signal has been detected
 	 i_sck_RPI: in std_logic;
     o_status: out std_logic
     --UART ports
@@ -46,8 +47,8 @@ begin
 	 port map(
 	 i_Clk => clk,
 	 i_RX_Serial => i_1bit,
-	 --o_RX_DV => r_DV,
-	 o_RX_DV => o_status,
+	 o_RX_DV => r_DV,
+	 --o_RX_DV => o_status,
 	 o_RX_Byte => data_sniffing_out_buffer
 	 );
     --Instantiate UART TX
@@ -84,8 +85,12 @@ begin
   Communication_Module_instance : entity work.Communication_Module
     port map (
       -- Connect to the common ports
+		clk => clk,
       in_comm_channel => data_sniffing_out_buffer,
-      out_comm_channel => o_Nbit
+      out_comm_channel => o_Nbit,
+		i_DV=>r_DV,
+		o_DV=>o_status,
+		i_ACK => i_Ack
     );
 
   --Instantiate SPI Communication Module
