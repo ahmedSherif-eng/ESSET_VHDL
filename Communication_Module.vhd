@@ -6,13 +6,28 @@ entity Communication_Module is
 	generic (
 		N: positive := 8 -- Number of input and output channels
 	);
-	port (
+	port ( 
+		clk:in std_logic;
+		i_DV: in std_logic ;
+		i_ACK: in std_logic;
 		in_comm_channel: in std_logic_vector(N-1 downto 0);
+		o_DV: out std_logic:='0';
 		out_comm_channel: out std_logic_vector(N-1 downto 0)
 	);
 end Communication_Module;
 
 architecture behav of Communication_Module is
 begin
-  out_comm_channel <=  in_comm_channel;
+process(clk)
+begin
+	if rising_edge(clk) then
+		if i_DV = '1' then
+			o_DV <= '1' ;
+		end if;
+		if i_ACK = '1' then
+			o_DV <= '0';
+		end if;
+	end if;
+ end process;
+ out_comm_channel <=  in_comm_channel;
 end behav;

@@ -9,21 +9,24 @@ entity Top_Level is
   port (
     -- genereal ports
     i_1bit: in std_logic;
-    o_Nbit: out std_logic_vector(N-1 downto 0);
+   -- o_1bit: out std_logic; --output of communication module
     clk: in std_logic;
-    o_status: out std_logic;
+	 o_Nbit: out std_logic_vector (7 downto 0);
+	 i_ACK: in std_logic; -- ack of RPI that the DV signal has been detected
+	 i_sck_RPI: in std_logic;
+    o_status: out std_logic
     --UART ports
-	 i_TX_DV: in std_logic;
-    i_TX_Byte   : in  std_logic_vector(7 downto 0);
-    o_TX_Active : out std_logic;
-    o_TX_Serial : out std_logic;
-    o_TX_Done   : out std_logic;
+--	 i_TX_DV: in std_logic;
+ --   i_TX_Byte   : in  std_logic_vector(7 downto 0);
+ --   o_TX_Active : out std_logic;
+--    o_TX_Serial : out std_logic;
+--    o_TX_Done   : out std_logic;
 	 --SPI Slave ports
-	 i_SPI_clk: in std_logic;
+--	 i_SPI_clk: in std_logic;
 	 --SPI Master ports
-	 o_SPI_MOSI:out std_logic;
-	 o_sck:out std_logic;
-	 o_SS:out std_logic
+--	 o_SPI_MOSI:out std_logic;
+--	 o_sck:out std_logic;
+--	 o_SS:out std_logic
   );
 end Top_Level;
 
@@ -40,13 +43,14 @@ begin
     --);
 	 
 	 --Instantiate UART RX
-	 --UART_Receiver_Instance: entity work.UART_Receiver
-	 --port map(
-	 --i_Clk => clk,
-	 --i_RX_Serial => i_1bit,
+	 UART_Receiver_Instance: entity work.UART_Receiver
+	 port map(
+	 i_Clk => clk,
+	 i_RX_Serial => i_1bit,
+	 o_RX_DV => r_DV,
 	 --o_RX_DV => o_status,
-	 --o_RX_Byte => data_sniffing_out_buffer
-	 --);
+	 o_RX_Byte => data_sniffing_out_buffer
+	 );
     --Instantiate UART TX
     --UART_Transmitter_Instance: entity work.UART_TX
     --port map(
@@ -59,33 +63,46 @@ begin
   --  );
 
 	  --Instantiate SPI Slave
-    SPI_Slave_Instance: entity work.SPI_Slave
-    port map(
-		i_MOSI => i_1bit,
-		o_DV => o_status,
-		o_Rec_Data => data_sniffing_out_buffer,
-		i_SCK => i_SPI_clk
-    );
+--    SPI_Slave_Instance: entity work.SPI_Slave
+ --   port map(
+--		i_MOSI => i_1bit,
+--		o_DV => o_status,
+--		o_Rec_Data => data_sniffing_out_buffer,
+--		i_SCK => i_SPI_clk
+--    );
 	 --Instantiate SPI Master
-	 SPI_Master_Instance: entity work.SPI_Master
-	 port map(
-	 o_MOSI => o_SPI_MOSI ,
-	 o_sck => o_sck ,
-	 o_SS => o_SS,
-	 i_clk => clk,
-	 i_TX_Byte =>X"35",
-	 i_TX_DV =>'1'
-	 );
+--	 SPI_Master_Instance: entity work.SPI_Master
+--	 port map(
+--	 o_MOSI => o_SPI_MOSI ,
+--	 o_sck => o_sck ,
+--	 o_SS => o_SS,
+--	 i_clk => clk,
+--	 i_TX_Byte =>X"35",
+--	 i_TX_DV =>'1'
+--	 );
 
   -- Instantiate Communication_Protocol
   Communication_Module_instance : entity work.Communication_Module
     port map (
       -- Connect to the common ports
+		clk => clk,
       in_comm_channel => data_sniffing_out_buffer,
-      out_comm_channel => o_Nbit
+      out_comm_channel => o_Nbit,
+		i_DV=>r_DV,
+		o_DV=>o_status,
+		i_ACK => i_Ack
     );
 
-  
+  --Instantiate SPI Communication Module
+ --   Communication_SPI_instance : entity work.Communication_SPI
+  --  port map (
+      -- Connect to the common ports
+   --   i_Data => data_sniffing_out_buffer,
+    --  o_MISO => o_1bit,
+	--	i_SCK		=> i_sck_RPI,
+	--	i_Sniff_DV => r_DV,
+	--	o_DV => o_status
+    --);
   -- Connect the status signal from Data_Sniffing to an external signal
  -- o_status <= data_sniffing_status_internal;
 end behav;

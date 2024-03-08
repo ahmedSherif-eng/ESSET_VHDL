@@ -4,13 +4,13 @@ use ieee.numeric_std.all;
 
 entity UART_Receiver is
 	generic (
-		g_CLKS_PER_BIT: integer := 5208   --assume clock is 50 MHz and baud rate 9600, 50M/115200 = 217
+		g_CLKS_PER_BIT: integer := 5208   --assume clock is 50 MHz and baud rate 9600, 50M/9600 = 217
 	);
 	port(
 		i_Clk: in std_logic;
 		i_RX_Serial: in std_logic;
 		o_RX_DV : out std_logic;
-		o_RX_Byte: out std_logic_vector (7 downto 0)
+		o_RX_Byte: out std_logic_vector (7 downto 0):=(others=>'0')
 	);
 end UART_Receiver;
 
@@ -109,7 +109,7 @@ begin
   end process p_UART_RX;
 
   o_RX_DV   <= r_RX_DV;
-	o_RX_Byte <= r_RX_Byte when(r_RX_DV = '1');
+  o_RX_Byte <= r_RX_Byte when(r_RX_DV = '1');
 
   end Behav;
 				
