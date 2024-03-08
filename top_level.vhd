@@ -59,6 +59,7 @@ begin
 	 );
    Conditional_ByPass_Instance: entity work.ConditionalByPass
    port map(
+    clk =>clk,
     i_DV => r_DV,
     o_DV => r_cDV,
     o_output => r_output,

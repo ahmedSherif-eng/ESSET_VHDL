@@ -4,7 +4,7 @@ use ieee.numeric_std.all;
  
 entity UART_TX is
   generic (
-    g_CLKS_PER_BIT : integer := 5208     -- Needs to be set correctly
+    g_CLKS_PER_BIT : integer := 434     -- Needs to be set correctly
     );
   port (
     i_Clk       : in  std_logic;
@@ -25,9 +25,9 @@ architecture RTL of UART_TX is
  
   signal r_Clk_Count : integer range 0 to g_CLKS_PER_BIT-1 := 0;
   signal r_Bit_Index : integer range 0 to 7 := 0;  -- 8 Bits Total
-  signal r_TX_Data   : std_logic_vector(7 downto 0) := (others => '0');
+  signal r_TX_Data   : std_logic_vector(7 downto 0) := (others => '1');
   signal r_TX_Done   : std_logic := '0';
-  signal r_TX_DV     : std_logic := '1';
+  signal r_TX_DV     : std_logic := '0';
 begin
   p_UART_TX : process (i_Clk)
   begin
