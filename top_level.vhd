@@ -1,7 +1,6 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use work.Common_Ports.all;
-
 entity Top_Level is
 	generic (
     N: positive := 8  -- Number of output channels
@@ -11,15 +10,15 @@ entity Top_Level is
     i_1bit: in std_logic;
    -- o_1bit: out std_logic; --output of communication module
     clk: in std_logic;
-	 o_Nbit: out std_logic_vector (7 downto 0);
-	 i_ACK: in std_logic; -- ack of RPI that the DV signal has been detected
-	 i_sck_RPI: in std_logic;
-    o_status: out std_logic
+	 --o_Nbit: out std_logic_vector (7 downto 0);
+	 --i_ACK: in std_logic; -- ack of RPI that the DV signal has been detected
+	 --i_sck_RPI: in std_logic;
+    o_status: out std_logic;
     --UART ports
 --	 i_TX_DV: in std_logic;
  --   i_TX_Byte   : in  std_logic_vector(7 downto 0);
  --   o_TX_Active : out std_logic;
---    o_TX_Serial : out std_logic;
+    o_TX_Serial : out std_logic
 --    o_TX_Done   : out std_logic;
 	 --SPI Slave ports
 --	 i_SPI_clk: in std_logic;
@@ -51,6 +50,21 @@ begin
 	 --o_RX_DV => o_status,
 	 o_RX_Byte => data_sniffing_out_buffer
 	 );
+   UART_Transimitter_Instance: entity work.UART_TX
+	 port map(
+    i_Clk => clk,
+    i_TX_DV => r_cDV,
+    i_TX_Byte => r_output,
+    o_TX_Serial => o_TX_Serial
+	 );
+   Conditional_ByPass_Instance: entity work.ConditionalByPass
+   port map(
+    i_DV => r_DV,
+    o_DV => r_cDV,
+    o_output => r_output,
+    o_status => o_status,
+    i_input => data_sniffing_out_buffer
+   );
     --Instantiate UART TX
     --UART_Transmitter_Instance: entity work.UART_TX
     --port map(
@@ -82,16 +96,16 @@ begin
 --	 );
 
   -- Instantiate Communication_Protocol
-  Communication_Module_instance : entity work.Communication_Module
-    port map (
-      -- Connect to the common ports
-		clk => clk,
-      in_comm_channel => data_sniffing_out_buffer,
-      out_comm_channel => o_Nbit,
-		i_DV=>r_DV,
-		o_DV=>o_status,
-		i_ACK => i_Ack
-    );
+--  Communication_Module_instance : entity work.Communication_Module
+--    port map (
+--      -- Connect to the common ports
+--		clk => clk,
+--      in_comm_channel => data_sniffing_out_buffer,
+--      out_comm_channel => o_Nbit,
+--		i_DV=>r_DV,
+--		o_DV=>o_status,
+--		i_ACK => i_Ack
+--   );
 
   --Instantiate SPI Communication Module
  --   Communication_SPI_instance : entity work.Communication_SPI
