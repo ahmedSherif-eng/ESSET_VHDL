@@ -4,7 +4,7 @@ use ieee.numeric_std.all;
 
 entity UART_Receiver is
 	generic (
-		g_CLKS_PER_BIT: integer := 434   --assume clock is 50 MHz and baud rate 9600, 50M/9600 = 217
+		g_CLKS_PER_BIT: integer := 5208   --assume clock is 50 MHz and baud rate 9600, 50M/9600 = 217
 	);
 	port(
 		i_Clk: in std_logic;

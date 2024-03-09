@@ -50,6 +50,16 @@ begin
 	 --o_RX_DV => o_status,
 	 o_RX_Byte => data_sniffing_out_buffer
 	 );
+   Conditional_ByPass_Instance: entity work.ConditionalByPass
+   port map(
+    clk =>clk,
+    i_input => data_sniffing_out_buffer,
+    i_DV => r_DV,
+    o_DV => r_cDV,
+    o_output => r_output,
+    o_status => o_status
+    
+   );
    UART_Transimitter_Instance: entity work.UART_TX
 	 port map(
     i_Clk => clk,
@@ -57,15 +67,7 @@ begin
     i_TX_Byte => r_output,
     o_TX_Serial => o_TX_Serial
 	 );
-   Conditional_ByPass_Instance: entity work.ConditionalByPass
-   port map(
-    clk =>clk,
-    i_DV => r_DV,
-    o_DV => r_cDV,
-    o_output => r_output,
-    o_status => o_status,
-    i_input => data_sniffing_out_buffer
-   );
+
     --Instantiate UART TX
     --UART_Transmitter_Instance: entity work.UART_TX
     --port map(
