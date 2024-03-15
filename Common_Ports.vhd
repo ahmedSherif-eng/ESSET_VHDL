@@ -7,6 +7,10 @@ package Common_Ports is
 	signal data_sniffing_out_buffer: std_logic_vector(N-1 downto 0);
 	signal data_sniffing_status_internal: std_logic;
 	signal r_DV:std_logic;
+	signal r_cDV:std_logic;
+	signal r_output: std_logic_vector(7 downto 0);
+
+
 end Common_Ports;
 
 package body Common_Ports is

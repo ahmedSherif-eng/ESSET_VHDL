@@ -9,10 +9,10 @@ entity UART_TX is
   port (
     i_Clk       : in  std_logic;
     i_TX_DV     : in  std_logic;
-   -- i_TX_Byte   : in  std_logic_vector(7 downto 0);
-    o_TX_Active : out std_logic;
-    o_TX_Serial : out std_logic;
-    o_TX_Done   : out std_logic
+    i_TX_Byte   : in  std_logic_vector(7 downto 0);
+  --  o_TX_Active : out std_logic;
+    o_TX_Serial : out std_logic
+  --  o_TX_Done   : out std_logic
     );
 end UART_TX;
  
@@ -25,12 +25,10 @@ architecture RTL of UART_TX is
  
   signal r_Clk_Count : integer range 0 to g_CLKS_PER_BIT-1 := 0;
   signal r_Bit_Index : integer range 0 to 7 := 0;  -- 8 Bits Total
-  signal r_TX_Data   : std_logic_vector(7 downto 0) := (others => '0');
+  signal r_TX_Data   : std_logic_vector(7 downto 0) := (others => '1');
   signal r_TX_Done   : std_logic := '0';
-  signal r_TX_DV     : std_logic := '1';
+  signal r_TX_DV     : std_logic := '0';
 begin
- 
-   
   p_UART_TX : process (i_Clk)
   begin
     if rising_edge(i_Clk) then
@@ -38,14 +36,14 @@ begin
       case r_SM_Main is
  
         when s_Idle =>
-          o_TX_Active <= '0';
+        --  o_TX_Active <= '0';
           o_TX_Serial <= '1';         -- Drive Line High for Idle
-          r_TX_Done   <= '0';
+        --  r_TX_Done   <= '0';
           r_Clk_Count <= 0;
           r_Bit_Index <= 0;
  
           if r_TX_DV = '1' then
-          --  r_TX_Data <= i_TX_Byte;
+            r_TX_Data <= i_TX_Byte;
             r_SM_Main <= s_TX_Start_Bit;
           else
             r_SM_Main <= s_Idle;
@@ -53,7 +51,7 @@ begin
  
         -- Send out Start Bit. Start bit = 0
         when s_TX_Start_Bit =>
-          o_TX_Active <= '1';
+        --  o_TX_Active <= '1';
           o_TX_Serial <= '0';
  
           -- Wait g_CLKS_PER_BIT-1 clock cycles for start bit to finish
@@ -101,7 +99,7 @@ begin
          
         -- Stay here 1 clock 
         when s_Cleanup =>
-          o_TX_Active <= '0';
+        --  o_TX_Active <= '0';
           r_TX_Done   <= '1';
           r_SM_Main   <= s_Idle;
  
@@ -111,7 +109,7 @@ begin
       end case;
     end if;
   end process p_UART_TX;
-  r_TX_Data<=X"35";
-  o_TX_Done <= r_TX_Done;
+  r_TX_DV <= i_TX_DV;
+ -- o_TX_Done <= r_TX_Done;
    
 end RTL;
