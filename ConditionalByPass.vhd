@@ -4,7 +4,7 @@ use ieee.numeric_std.all;
 
 entity ConditionalByPass is
     generic (
-        OUTPUT_SIZE : integer := 8  -- Default output size is 32 bits
+        OUTPUT_SIZE : integer := 16  -- Default output size is 32 bits
     );
     port (
         clk       : in  std_logic;
@@ -16,11 +16,8 @@ end ConditionalByPass;
 
 architecture behav of ConditionalByPass is
     signal r_input     : std_logic_vector(OUTPUT_SIZE - 1 downto 0) := (others => '0');
-    signal r_condition : std_logic_vector(OUTPUT_SIZE - 1 downto 0) := X"33";
+    signal r_condition : std_logic_vector(OUTPUT_SIZE - 1 downto 0) := X"3233";--0000 0000 1111 1111
     signal r_status    : std_logic := '0';
-    --signal r_first     : std_logic := '0';
-    --signal r_data_count : integer range 0 to OUTPUT_SIZE/8 := 0; -- Counter for received bytes
-
 begin
     process(clk)
     begin

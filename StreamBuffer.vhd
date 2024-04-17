@@ -1,14 +1,13 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
-
 entity StreamBuffer is
     generic (
-        OUTPUT_SIZE : integer := 32  -- Default output size is 16 bits
+        OUTPUT_SIZE : integer := 16  -- Default output size is 16 bits
     );
     Port (
         clk : in STD_LOGIC;
-        DV : in STD_LOGIC;
+        i_DV : in STD_LOGIC;
         Data_In : in STD_LOGIC_VECTOR(7 downto 0);
         Data_Out : out STD_LOGIC_VECTOR(OUTPUT_SIZE - 1 downto 0);
         DV_Out : out STD_LOGIC
@@ -20,13 +19,13 @@ architecture Behavioral of StreamBuffer is
     signal data_ready : STD_LOGIC := '0'; -- Signal to indicate if data is ready
     signal data_count : integer range 0 to OUTPUT_SIZE/8 := 0; -- Counter for received bytes
 begin
-    process(DV, Data_In)
+    process(i_DV, Data_In)
     begin 
         if rising_edge(clk) then
-            if DV = '1' then
+            if i_DV = '1' then
                 -- Shift the buffer
                 for i in OUTPUT_SIZE - 9 downto 0 loop
-                    buff(i + 8) <= buff(i);
+                    buff(i + 8) <= buff(i);  
                 end loop;
                 
                 -- Load new data into buffer
@@ -38,14 +37,7 @@ begin
                 -- Check if enough data has been received
                 if data_count = OUTPUT_SIZE/8 -1 then
                     data_ready <= '1';
-                    data_count <= 0; -- Reset data count if DV is deasserted
-                else
-                    data_ready <= '0';
                 end if;
-            else
-                -- Clear data ready signal if DV is not asserted
-                data_ready <= '0';
-                
             end if;
         end if;
     end process;
