@@ -10,7 +10,7 @@ entity Top_Level is
     i_1bit: in std_logic;
    -- o_1bit: out std_logic; --output of communication module
     clk: in std_logic;
-	 --o_Nbit: out std_logic_vector (7 downto 0);
+	  --o_Nbit: out std_logic_vector (7 downto 0);
 	 --i_ACK: in std_logic; -- ack of RPI that the DV signal has been detected
 	 --i_sck_RPI: in std_logic;
     o_status: out std_logic;
@@ -30,6 +30,9 @@ entity Top_Level is
 end Top_Level;
 
 architecture behav of Top_Level is
+signal r_status: std_logic := '0';
+signal r_SV: std_logic := '0'; --stream valid
+signal r_bytes : std_logic_vector (15 downto 0); -- condition based
 begin
 
    --Instantiate Data_Sniffing
@@ -42,6 +45,14 @@ begin
     --);
 	 
 	 --Instantiate UART RX
+   AndGate_Instance: entity work.AndGate
+   port map(
+    clk =>clk,
+    i_input => i_1bit,
+    i_enable => r_status,
+    o_output => o_TX_Serial
+    
+   );
 	 UART_Receiver_Instance: entity work.UART_Receiver
 	 port map(
 	 i_Clk => clk,
@@ -53,20 +64,27 @@ begin
    Conditional_ByPass_Instance: entity work.ConditionalByPass
    port map(
     clk =>clk,
-    i_input => data_sniffing_out_buffer,
-    i_DV => r_DV,
-    o_DV => r_cDV,
-    o_output => r_output,
-    o_status => o_status
+    i_input => r_bytes,
+    i_DV =>r_SV ,
+    o_status => r_status
     
    );
-   UART_Transimitter_Instance: entity work.UART_TX
-	 port map(
-    i_Clk => clk,
-    i_TX_DV => r_cDV,
-    i_TX_Byte => r_output,
-    o_TX_Serial => o_TX_Serial
-	 );
+   StreamBuffer_Instance: entity work.StreamBuffer
+   port map(
+    clk =>clk,
+    i_DV => r_DV  ,
+    Data_In => data_sniffing_out_buffer,
+    Data_Out => r_bytes ,
+    DV_Out => r_SV
+   );
+	o_status <= r_status;
+ --  UART_Transimitter_Instance: entity work.UART_TX
+--	 port map(
+--    i_Clk => clk,
+ --   i_TX_DV => r_cDV,
+  --  i_TX_Byte => r_output,
+  --  o_TX_Serial => o_TX_Serial
+--	 );
 
     --Instantiate UART TX
     --UART_Transmitter_Instance: entity work.UART_TX
