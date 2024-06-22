@@ -10,16 +10,17 @@ entity Top_Level is
     i_1bit: in std_logic;
    -- o_1bit: out std_logic; --output of communication module
     clk: in std_logic;
-	  --o_Nbit: out std_logic_vector (7 downto 0);
-	 --i_ACK: in std_logic; -- ack of RPI that the DV signal has been detected
+	  o_Nbit: out std_logic_vector (7 downto 0);
+	 i_ACK: in std_logic; -- ack of RPI that the DV signal has been detected
 	 --i_sck_RPI: in std_logic;
     o_status: out std_logic;
     --UART ports
---	 i_TX_DV: in std_logic;
- --   i_TX_Byte   : in  std_logic_vector(7 downto 0);
- --   o_TX_Active : out std_logic;
-    o_TX_Serial : out std_logic
---    o_TX_Done   : out std_logic;
+	  i_TX_DV: in std_logic;
+    i_TX_Byte   : in  std_logic_vector(7 downto 0);
+    o_TX_Active : out std_logic;
+    o_TX_Serial : out std_logic;
+    o_TX_Done   : out std_logic;
+  i_Start_Sniffing: in std_logic
 	 --SPI Slave ports
 --	 i_SPI_clk: in std_logic;
 	 --SPI Master ports
@@ -45,39 +46,60 @@ begin
     --);
 	 
 	 --Instantiate UART RX
-   AndGate_Instance: entity work.AndGate
-   port map(
-    clk =>clk,
-    i_input => i_1bit,
-    i_enable => r_status,
-    o_output => o_TX_Serial
-    
-   );
+--   AndGate_Instance: entity work.AndGate
+--   port map(
+--    clk =>clk,
+--    i_input => i_1bit,
+--    i_enable => r_status,
+--    o_output => o_TX_Serial  
+--   );
 	 UART_Receiver_Instance: entity work.UART_Receiver
 	 port map(
 	 i_Clk => clk,
 	 i_RX_Serial => i_1bit,
 	 o_RX_DV => r_DV,
-	 --o_RX_DV => o_status,
+   i_Start => i_Start_Sniffing,
+	--o_RX_DV => o_status,
 	 o_RX_Byte => data_sniffing_out_buffer
 	 );
-   Conditional_ByPass_Instance: entity work.ConditionalByPass
+ --  Instantiate UART TX
+   UART_Transmitter_Instance: entity work.UART_TX
    port map(
-    clk =>clk,
-    i_input => r_bytes,
-    i_DV =>r_SV ,
-    o_status => r_status
-    
+     i_Clk => clk,
+     i_TX_DV => i_TX_DV,
+     i_TX_Byte => i_TX_Byte,
+   --  o_TX_Active => o_TX_Active,
+     o_TX_Serial => o_TX_Serial,
+     o_TX_Done => o_TX_Done
    );
-   StreamBuffer_Instance: entity work.StreamBuffer
-   port map(
-    clk =>clk,
-    i_DV => r_DV  ,
-    Data_In => data_sniffing_out_buffer,
-    Data_Out => r_bytes ,
-    DV_Out => r_SV
-   );
-	o_status <= r_status;
+  -- Instantiate Communication_Protocol
+   Communication_Module_instance : entity work.Communication_Module
+     port map (
+       -- Connect to the common ports
+     clk => clk,
+     in_comm_channel => data_sniffing_out_buffer,
+     out_comm_channel => o_Nbit,
+     i_DV=>r_DV,
+     o_DV=>o_status,
+     i_ACK => i_Ack
+    );
+ 
+--   Conditional_ByPass_Instance: entity work.ConditionalByPass
+--   port map(
+--    clk =>clk,
+--    i_input => r_bytes,
+--   i_DV =>r_SV ,
+--    o_status => r_status  
+--   );
+--   StreamBuffer_Instance: entity work.StreamBuffer
+--   port map(
+--    clk =>clk,
+--    i_DV => r_DV  ,
+--    Data_In => data_sniffing_out_buffer,
+--    Data_Out => r_bytes ,
+--    DV_Out => r_SV
+--   );
+--	o_status <= r_status;
  --  UART_Transimitter_Instance: entity work.UART_TX
 --	 port map(
 --    i_Clk => clk,
@@ -85,17 +107,6 @@ begin
   --  i_TX_Byte => r_output,
   --  o_TX_Serial => o_TX_Serial
 --	 );
-
-    --Instantiate UART TX
-    --UART_Transmitter_Instance: entity work.UART_TX
-    --port map(
-      --i_Clk => clk,
-     -- i_TX_DV => i_TX_DV,
-      --i_TX_Byte => i_TX_Byte,
-    --  o_TX_Active => o_TX_Active,
-    --  o_TX_Serial => o_TX_Serial,
-    --  o_TX_Done => o_TX_Done
-  --  );
 
 	  --Instantiate SPI Slave
 --    SPI_Slave_Instance: entity work.SPI_Slave
@@ -115,19 +126,6 @@ begin
 --	 i_TX_Byte =>X"35",
 --	 i_TX_DV =>'1'
 --	 );
-
-  -- Instantiate Communication_Protocol
---  Communication_Module_instance : entity work.Communication_Module
---    port map (
---      -- Connect to the common ports
---		clk => clk,
---      in_comm_channel => data_sniffing_out_buffer,
---      out_comm_channel => o_Nbit,
---		i_DV=>r_DV,
---		o_DV=>o_status,
---		i_ACK => i_Ack
---   );
-
   --Instantiate SPI Communication Module
  --   Communication_SPI_instance : entity work.Communication_SPI
   --  port map (
