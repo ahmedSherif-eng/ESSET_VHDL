@@ -4,15 +4,15 @@ use ieee.numeric_std.all;
  
 entity UART_TX is
   generic (
-    g_CLKS_PER_BIT : integer := 5208     -- Needs to be set correctly
+    g_CLKS_PER_BIT : integer := 434     -- Needs to be set correctly
     );
   port (
     i_Clk       : in  std_logic;
     i_TX_DV     : in  std_logic;
     i_TX_Byte   : in  std_logic_vector(7 downto 0);
   --  o_TX_Active : out std_logic;
-    o_TX_Serial : out std_logic
-  --  o_TX_Done   : out std_logic
+    o_TX_Serial : out std_logic;
+    o_TX_Done   : out std_logic
     );
 end UART_TX;
  
@@ -36,13 +36,14 @@ begin
       case r_SM_Main is
  
         when s_Idle =>
-        --  o_TX_Active <= '0';
+          --o_TX_Active <= '0';
           o_TX_Serial <= '1';         -- Drive Line High for Idle
-        --  r_TX_Done   <= '0';
+        
           r_Clk_Count <= 0;
           r_Bit_Index <= 0;
  
           if r_TX_DV = '1' then
+			   r_TX_Done   <= '0';
             r_TX_Data <= i_TX_Byte;
             r_SM_Main <= s_TX_Start_Bit;
           else
@@ -110,6 +111,6 @@ begin
     end if;
   end process p_UART_TX;
   r_TX_DV <= i_TX_DV;
- -- o_TX_Done <= r_TX_Done;
+  o_TX_Done <= r_TX_Done;
    
 end RTL;

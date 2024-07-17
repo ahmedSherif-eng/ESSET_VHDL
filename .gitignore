@@ -1,5 +1,2 @@
-output_files/
-*.cnf.cdb
-*.cnf.hdb
-*.asm
-*.map
+*
+!*.vhd

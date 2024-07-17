@@ -4,12 +4,13 @@ use ieee.numeric_std.all;
 
 entity UART_Receiver is
 	generic (
-		g_CLKS_PER_BIT: integer := 5208   --assume clock is 50 MHz and baud rate 9600, 50M/9600 = 217
+		g_CLKS_PER_BIT: integer := 434   --assume clock is 50 MHz and baud rate 9600, 50M/9600 = 217
 	);
 	port(
 		i_Clk: in std_logic;
 		i_RX_Serial: in std_logic;
 		o_RX_DV : out std_logic;
+		i_Start : in std_logic;
 		o_RX_Byte: out std_logic_vector (7 downto 0):=(others=>'0')
 	);
 end UART_Receiver;
@@ -18,32 +19,30 @@ architecture Behav of UART_Receiver is
 	type t_SM_Main is (s_Idle, s_RX_Start_Bit, s_RX_Data_Bits,
 							s_RX_Stop_Bit,s_Cleanup) ;
 	signal r_SM_Main : t_SM_Main := s_Idle;
-	
 	signal r_Clk_Count : integer range  0 to g_CLKS_PER_BIT -1 :=0;
 	signal r_Bit_Index : integer range 0 to 7 :=0;
 	signal r_RX_Byte : std_logic_vector (7 downto 0):=(others=>'0');
 	signal r_RX_DV : std_logic :='0';
-	
 
-	
 begin 
 	p_UART_RX : process (i_Clk)
 	begin
 	if rising_edge(i_Clk) then
-
 		case r_SM_Main is 
-	
+
 			when s_Idle =>
 				r_RX_DV <= '0';
 				r_Clk_Count <=0;
 				r_Bit_Index <=0;
-				
-				if i_RX_Serial ='0' then
-					r_SM_Main <= s_RX_Start_Bit;
+				if i_Start = '1' then 
+					if i_RX_Serial ='0' then
+						r_SM_Main <= s_RX_Start_Bit;
+					else
+						r_SM_Main <= s_Idle;
+					end if;
 				else
 					r_SM_Main <= s_Idle;
 				end if;
-				
 				
 			when s_RX_Start_Bit =>
 				if r_Clk_Count = (g_CLKS_PER_BIT-1)/2 then
@@ -107,10 +106,9 @@ begin
       end case;
     end if;
   end process p_UART_RX;
-
   o_RX_DV   <= r_RX_DV;
   o_RX_Byte <= r_RX_Byte when(r_RX_DV = '1');
-
+	
   end Behav;
 				
 				
